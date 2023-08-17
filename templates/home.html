@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do app</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+</head>
+<body>
+    <h1>To-Do Application</h1>
+    <div id="pending">
+        <h2>Pending Tasks</h2>
+        <ul>
+            {% for task in pendingTasks %}
+            <li>
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    <label for="task{{ task.id }}">{{ task.title }}</label>
+                    <button type="submit" formaction="{% url 'complete' task.id %}">Complete Task</button>
+                    <button type="submit" formaction="{% url 'delete' task.id %}">Delete Task</button>
+                </form>
+            </li>
+            {% endfor %}
+            {% if pendingTasks|length == 0 %}
+            <li>No pending tasks</li>
+            {% endif %}
+        </ul>
+    </div>
+    <div id="completed">
+        <h2>Completed Tasks</h2>
+        <ul>
+            {% for task in completedTasks %}
+            <li>
+                <form method="post" action="{% url 'delete' task.id %}">
+                    {% csrf_token %}
+                    <label for="task{{ task.id }}">{{ task.title }}</label>
+                    <button type="submit">Remove Task</button>
+                </form>
+            </li>
+            {% endfor %}
+            {% if completedTasks|length == 0 %}
+            <li>No completed tasks or all tasks were deleted</li>
+            {% endif %}
+        </ul>
+    </div>
+    <div id="addTask">
+        <h2>Add Task</h2>
+        <form action="{% url 'add' %}" method="post">
+            {% csrf_token %}
+            <input type="text" name="task" id="task" placeholder="Enter Task">
+            <input type="submit" value="Add Task">
+        </form>
+    </div>
+</body>
+</html>
